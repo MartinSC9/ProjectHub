@@ -1,0 +1,211 @@
+{
+  "projects": [
+    {
+      "id": "aisalon",
+      "name": "AISalon",
+      "path": "D:/Files/Projects/AISalon",
+      "description": "Sistema de gestión para salón de belleza con IA",
+      "tags": ["next.js", "typescript", "css-modules"],
+      "status": "in-progress",
+      "servers": {
+        "frontend": { "command": "npm run dev", "port": 3000 }
+      },
+      "tasks": [
+        { "id": 1, "text": "Conectar módulos con backend real", "status": "pending" },
+        { "id": 2, "text": "Implementar autenticación real", "status": "pending" }
+      ],
+      "bugs": []
+    },
+    {
+      "id": "theriverse",
+      "name": "Theriverse",
+      "path": "D:/Files/Projects/theriverse",
+      "description": "App social para comunidad therian - React Native + Expo",
+      "tags": ["react-native", "expo", "supabase", "typescript"],
+      "status": "in-progress",
+      "servers": {
+        "mobile": { "command": "npx expo start", "port": 8081 }
+      },
+      "tasks": [
+        { "id": 1, "text": "Conectar Supabase (URL + anon key en .env)", "status": "pending" },
+        { "id": 2, "text": "Ejecutar migraciones SQL", "status": "pending" }
+      ],
+      "bugs": [
+        { "id": 1, "text": "10 errores TS pre-existentes (FlashList types, MMKV native) - no afectan runtime", "severity": "low" }
+      ]
+    },
+    {
+      "id": "bondiya",
+      "name": "BondiYa",
+      "path": "D:/Files/Projects/bondiya",
+      "description": "App de notificaciones de proximidad de colectivos - Córdoba",
+      "tags": ["expo", "react-native", "express", "postgresql"],
+      "status": "in-progress",
+      "servers": {
+        "frontend": { "command": "cd app && npx expo start", "port": 8081 },
+        "backend": { "command": "cd server && npx tsx src/index.ts", "port": 3000 }
+      },
+      "tasks": [
+        { "id": 1, "text": "Configurar PostgreSQL y ejecutar migraciones", "status": "pending" },
+        { "id": 2, "text": "Integrar MercadoPago para suscripciones", "status": "pending" }
+      ],
+      "bugs": [
+        { "id": 1, "text": "Errores TS por Ionicons/Slider (React 18 vs 19 types)", "severity": "low" }
+      ]
+    },
+    {
+      "id": "mytree",
+      "name": "My Tree in the World",
+      "path": "D:/Files/Projects/My tree in the world",
+      "description": "Mi árbol en el mundo",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "portfolio",
+      "name": "Portfolio",
+      "path": "D:/Files/Projects/Portfolio",
+      "description": "Portfolio personal",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "triso",
+      "name": "Triso",
+      "path": "D:/Files/Projects/Triso",
+      "description": "Proyecto Triso",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "aiva",
+      "name": "AIVA",
+      "path": "D:/Files/Projects/AIVA",
+      "description": "Proyecto AIVA",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "camila-landing",
+      "name": "Camila Landing",
+      "path": "D:/Files/Projects/camila-landing",
+      "description": "Landing page para Camila",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "camila-landing-v2",
+      "name": "Camila Landing V2",
+      "path": "D:/Files/Projects/camila-landing-v2",
+      "description": "Landing page V2 para Camila",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "camila-landing-v3",
+      "name": "Camila Landing V3",
+      "path": "D:/Files/Projects/camila-landing-v3",
+      "description": "Landing page V3 para Camila",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "camila-moda",
+      "name": "Camila Moda",
+      "path": "D:/Files/Projects/camila-moda",
+      "description": "Tienda de moda Camila",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "casa-campo",
+      "name": "Casa Campo Altagracia",
+      "path": "D:/Files/Projects/casa-campo-altagracia",
+      "description": "Proyecto casa de campo",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "dj-divito",
+      "name": "DJ Divito",
+      "path": "D:/Files/Projects/dj-divito",
+      "description": "Web para DJ Divito",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "loli-nails",
+      "name": "Loli Nails",
+      "path": "D:/Files/Projects/loli-nails",
+      "description": "Web para Loli Nails",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "therian-app",
+      "name": "Therian App",
+      "path": "D:/Files/Projects/therian-app",
+      "description": "App Therian",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "yateatiendo",
+      "name": "Ya Te Atiendo",
+      "path": "D:/Files/Projects/yateatiendo",
+      "description": "Proyecto Ya Te Atiendo",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    },
+    {
+      "id": "trabajo-lilab",
+      "name": "Trabajo - Lilab",
+      "path": "D:/Files/Projects/Trabajo - lilab",
+      "description": "Trabajo para Lilab",
+      "tags": [],
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": []
+    }
+  ]
+}
