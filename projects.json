@@ -5,33 +5,125 @@
       "name": "AISalon",
       "path": "D:/Files/Projects/AISalon",
       "description": "Sistema de gestión para salón de belleza con IA",
-      "tags": ["next.js", "typescript", "css-modules"],
+      "tags": [
+        "next.js",
+        "react",
+        "typescript"
+      ],
       "status": "in-progress",
       "servers": {
-        "frontend": { "command": "npm run dev", "port": 3000 }
+        "dev": {
+          "command": "npm run dev",
+          "port": 3000
+        }
       },
       "tasks": [
-        { "id": 1, "text": "Conectar módulos con backend real", "status": "pending" },
-        { "id": 2, "text": "Implementar autenticación real", "status": "pending" }
+        {
+          "id": 1,
+          "text": "Conectar módulos con backend real",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "text": "Implementar autenticación real",
+          "status": "pending"
+        }
       ],
       "bugs": []
     },
     {
-      "id": "theriverse",
-      "name": "Theriverse",
-      "path": "D:/Files/Projects/theriverse",
-      "description": "App social para comunidad therian - React Native + Expo",
-      "tags": ["react-native", "expo", "supabase", "typescript"],
-      "status": "in-progress",
-      "servers": {
-        "mobile": { "command": "npx expo start", "port": 8081 }
-      },
-      "tasks": [
-        { "id": 1, "text": "Conectar Supabase (URL + anon key en .env)", "status": "pending" },
-        { "id": 2, "text": "Ejecutar migraciones SQL", "status": "pending" }
+      "id": "aiva",
+      "name": "AIVA",
+      "path": "D:/Files/Projects/AIVA",
+      "description": "Asistente IA - Python FastAPI + WhatsApp bot + HTML frontend",
+      "tags": [
+        "python",
+        "fastapi",
+        "whatsapp",
+        "html"
       ],
-      "bugs": [
-        { "id": 1, "text": "10 errores TS pre-existentes (FlashList types, MMKV native) - no afectan runtime", "severity": "low" }
+      "status": "unknown",
+      "servers": {},
+      "tasks": [],
+      "bugs": [],
+      "subprojects": [
+        {
+          "id": "aiva-backend",
+          "name": "backend",
+          "path": "D:/Files/Projects/AIVA/proyectos/aiva-chat/backend",
+          "tags": [
+            "python"
+          ],
+          "status": "unknown",
+          "servers": {},
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "aiva-frontend",
+          "name": "frontend",
+          "path": "D:/Files/Projects/AIVA/proyectos/aiva-chat/frontend",
+          "tags": [
+            "react",
+            "vite",
+            "typescript",
+            "tailwind"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "aiva-landing-page",
+          "name": "landing-page",
+          "path": "D:/Files/Projects/AIVA/proyectos/landing-page",
+          "tags": [
+            "html",
+            "css"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npx serve -l 8080",
+              "port": 8080
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "aiva-whatsapp-bot",
+          "name": "whatsapp-bot",
+          "path": "D:/Files/Projects/AIVA/proyectos/whatsapp-bot",
+          "tags": [
+            "python"
+          ],
+          "status": "unknown",
+          "servers": {},
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "aiva-whatsapp-service",
+          "name": "aiva-whatsapp-service",
+          "path": "D:/Files/Projects/AIVA/proyectos/whatsapp-bot/whatsapp-service",
+          "tags": [],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
       ]
     },
     {
@@ -39,83 +131,111 @@
       "name": "BondiYa",
       "path": "D:/Files/Projects/bondiya",
       "description": "App de notificaciones de proximidad de colectivos - Córdoba",
-      "tags": ["expo", "react-native", "express", "postgresql"],
+      "tags": [
+        "expo",
+        "react-native",
+        "express",
+        "postgresql"
+      ],
       "status": "in-progress",
       "servers": {
-        "frontend": { "command": "cd app && npx expo start", "port": 8081 },
-        "backend": { "command": "cd server && npx tsx src/index.ts", "port": 3000 }
+        "mobile": {
+          "command": "cd app && npx expo start",
+          "port": 19000
+        },
+        "backend": {
+          "command": "cd server && npx tsx src/index.ts",
+          "port": 3000
+        }
       },
       "tasks": [
-        { "id": 1, "text": "Configurar PostgreSQL y ejecutar migraciones", "status": "pending" },
-        { "id": 2, "text": "Integrar MercadoPago para suscripciones", "status": "pending" }
+        {
+          "id": 1,
+          "text": "Configurar PostgreSQL y ejecutar migraciones",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "text": "Integrar MercadoPago para suscripciones",
+          "status": "pending"
+        }
       ],
       "bugs": [
-        { "id": 1, "text": "Errores TS por Ionicons/Slider (React 18 vs 19 types)", "severity": "low" }
+        {
+          "id": 1,
+          "text": "Errores TS por Ionicons/Slider (React 18 vs 19 types)",
+          "severity": "low"
+        }
+      ],
+      "subprojects": [
+        {
+          "id": "bondiya-app",
+          "name": "bondiya-app",
+          "path": "D:/Files/Projects/bondiya/app",
+          "tags": [
+            "react",
+            "react-native",
+            "expo",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 19000
+            },
+            "mobile": {
+              "command": "npx expo start",
+              "port": 19000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "bondiya-server",
+          "name": "bondiya-server",
+          "path": "D:/Files/Projects/bondiya/server",
+          "tags": [
+            "express",
+            "typescript",
+            "postgresql",
+            "mercadopago",
+            "jwt"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
       ]
-    },
-    {
-      "id": "mytree",
-      "name": "My Tree in the World",
-      "path": "D:/Files/Projects/My tree in the world",
-      "description": "Mi árbol en el mundo",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
-      "tasks": [],
-      "bugs": []
-    },
-    {
-      "id": "portfolio",
-      "name": "Portfolio",
-      "path": "D:/Files/Projects/Portfolio",
-      "description": "Portfolio personal",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
-      "tasks": [],
-      "bugs": []
-    },
-    {
-      "id": "triso",
-      "name": "Triso",
-      "path": "D:/Files/Projects/Triso",
-      "description": "Proyecto Triso",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
-      "tasks": [],
-      "bugs": []
-    },
-    {
-      "id": "aiva",
-      "name": "AIVA",
-      "path": "D:/Files/Projects/AIVA",
-      "description": "Proyecto AIVA",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
-      "tasks": [],
-      "bugs": []
-    },
-    {
-      "id": "camila-landing",
-      "name": "Camila Landing",
-      "path": "D:/Files/Projects/camila-landing",
-      "description": "Landing page para Camila",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
-      "tasks": [],
-      "bugs": []
     },
     {
       "id": "camila-landing-v2",
       "name": "Camila Landing V2",
       "path": "D:/Files/Projects/camila-landing-v2",
       "description": "Landing page V2 para Camila",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
+      "tags": [
+        "html",
+        "css"
+      ],
+      "status": "done",
+      "servers": {
+        "dev": {
+          "command": "npx serve -l 8080",
+          "port": 8080
+        }
+      },
       "tasks": [],
       "bugs": []
     },
@@ -124,9 +244,17 @@
       "name": "Camila Landing V3",
       "path": "D:/Files/Projects/camila-landing-v3",
       "description": "Landing page V3 para Camila",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
+      "tags": [
+        "html",
+        "css"
+      ],
+      "status": "done",
+      "servers": {
+        "dev": {
+          "command": "npx serve -l 8080",
+          "port": 8080
+        }
+      },
       "tasks": [],
       "bugs": []
     },
@@ -135,9 +263,17 @@
       "name": "Camila Moda",
       "path": "D:/Files/Projects/camila-moda",
       "description": "Tienda de moda Camila",
-      "tags": [],
+      "tags": [
+        "react",
+        "vite"
+      ],
       "status": "unknown",
-      "servers": {},
+      "servers": {
+        "dev": {
+          "command": "npm run dev",
+          "port": 5173
+        }
+      },
       "tasks": [],
       "bugs": []
     },
@@ -145,10 +281,18 @@
       "id": "casa-campo",
       "name": "Casa Campo Altagracia",
       "path": "D:/Files/Projects/casa-campo-altagracia",
-      "description": "Proyecto casa de campo",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
+      "description": "Landing estática casa de campo",
+      "tags": [
+        "html",
+        "css"
+      ],
+      "status": "done",
+      "servers": {
+        "dev": {
+          "command": "npx serve -l 8080",
+          "port": 8080
+        }
+      },
       "tasks": [],
       "bugs": []
     },
@@ -156,10 +300,21 @@
       "id": "dj-divito",
       "name": "DJ Divito",
       "path": "D:/Files/Projects/dj-divito",
-      "description": "Web para DJ Divito",
-      "tags": [],
+      "description": "Web/landing para DJ Divito con animaciones",
+      "tags": [
+        "next.js",
+        "react",
+        "typescript",
+        "tailwind",
+        "framer-motion"
+      ],
       "status": "unknown",
-      "servers": {},
+      "servers": {
+        "dev": {
+          "command": "npm run dev",
+          "port": 3000
+        }
+      },
       "tasks": [],
       "bugs": []
     },
@@ -167,10 +322,204 @@
       "id": "loli-nails",
       "name": "Loli Nails",
       "path": "D:/Files/Projects/loli-nails",
-      "description": "Web para Loli Nails",
-      "tags": [],
+      "description": "Web para Loli Nails - landings HTML + app React",
+      "tags": [
+        "html",
+        "css"
+      ],
       "status": "unknown",
+      "servers": {
+        "dev": {
+          "command": "npx serve -l 8080",
+          "port": 8080
+        }
+      },
+      "tasks": [],
+      "bugs": [],
+      "subprojects": [
+        {
+          "id": "loli-nails-react-app",
+          "name": "react-app",
+          "path": "D:/Files/Projects/loli-nails/react-app",
+          "tags": [
+            "react",
+            "vite",
+            "tailwind"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
+      ]
+    },
+    {
+      "id": "mytree",
+      "name": "My Tree in the World",
+      "path": "D:/Files/Projects/My tree in the world",
+      "description": "Plataforma de plantación de árboles - 6 roles, pagos, chat en tiempo real",
+      "tags": [
+        "react",
+        "express",
+        "expo",
+        "mysql",
+        "socket.io"
+      ],
+      "status": "in-progress",
       "servers": {},
+      "tasks": [],
+      "bugs": [],
+      "subprojects": [
+        {
+          "id": "mytree-back",
+          "name": "Backend",
+          "path": "D:/Files/Projects/My tree in the world/my-tree-in-the-world-back",
+          "tags": [
+            "express",
+            "mysql",
+            "socket.io",
+            "mercadopago",
+            "jwt"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "mytree-front",
+          "name": "Frontend",
+          "path": "D:/Files/Projects/My tree in the world/my-tree-in-the-world-front",
+          "tags": [
+            "react",
+            "vite",
+            "tailwind",
+            "framer-motion"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5174
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "mytree-landing",
+          "name": "Landing",
+          "path": "D:/Files/Projects/My tree in the world/my-tree-in-the-world-landing",
+          "tags": [
+            "react",
+            "vite",
+            "tailwind",
+            "framer-motion"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "mytree-mobile",
+          "name": "App Móvil",
+          "path": "D:/Files/Projects/My tree in the world/my-tree-in-the-world-mobile",
+          "tags": [
+            "react",
+            "react-native",
+            "expo",
+            "typescript"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 19000
+            },
+            "mobile": {
+              "command": "npx expo start",
+              "port": 19000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
+      ]
+    },
+    {
+      "id": "portfolio",
+      "name": "Portfolio",
+      "path": "D:/Files/Projects/Portfolio",
+      "description": "Portfolio personal",
+      "tags": [
+        "react"
+      ],
+      "status": "in-progress",
+      "servers": {
+        "dev": {
+          "command": "npm run start",
+          "port": 3000
+        }
+      },
+      "tasks": [],
+      "bugs": [],
+      "subprojects": [
+        {
+          "id": "portfolio-public",
+          "name": "public",
+          "path": "D:/Files/Projects/Portfolio/public",
+          "tags": [
+            "html",
+            "css"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npx serve -l 8080",
+              "port": 8080
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
+      ]
+    },
+    {
+      "id": "projecthub-landing",
+      "name": "ProjectHub Landing",
+      "path": "D:/Files/Projects/ProjectHub-landing",
+      "description": "Landing page estática de ProjectHub",
+      "tags": [
+        "html",
+        "css"
+      ],
+      "status": "done",
+      "servers": {
+        "dev": {
+          "command": "npx serve -l 8080",
+          "port": 8080
+        }
+      },
       "tasks": [],
       "bugs": []
     },
@@ -178,31 +527,1071 @@
       "id": "therian-app",
       "name": "Therian App",
       "path": "D:/Files/Projects/therian-app",
-      "description": "App Therian",
-      "tags": [],
+      "description": "App Therian - Vite + React con IA (Google AI, Groq)",
+      "tags": [
+        "react",
+        "vite",
+        "tailwind",
+        "framer-motion"
+      ],
       "status": "unknown",
-      "servers": {},
+      "servers": {
+        "dev": {
+          "command": "npm run dev",
+          "port": 5173
+        }
+      },
       "tasks": [],
       "bugs": []
     },
     {
-      "id": "yateatiendo",
-      "name": "Ya Te Atiendo",
-      "path": "D:/Files/Projects/yateatiendo",
-      "description": "Proyecto Ya Te Atiendo",
-      "tags": [],
-      "status": "unknown",
-      "servers": {},
-      "tasks": [],
-      "bugs": []
+      "id": "theriverse",
+      "name": "Theriverse",
+      "path": "D:/Files/Projects/theriverse",
+      "description": "App social para comunidad therian - React Native + Expo",
+      "tags": [
+        "react",
+        "react-native",
+        "expo",
+        "typescript",
+        "supabase",
+        "zustand",
+        "react-query"
+      ],
+      "status": "in-progress",
+      "servers": {
+        "dev": {
+          "command": "npm run start",
+          "port": 19000
+        },
+        "mobile": {
+          "command": "npx expo start",
+          "port": 19000
+        }
+      },
+      "tasks": [
+        {
+          "id": 1,
+          "text": "Conectar Supabase (URL + anon key en .env)",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "text": "Ejecutar migraciones SQL",
+          "status": "pending"
+        }
+      ],
+      "bugs": [
+        {
+          "id": 1,
+          "text": "10 errores TS pre-existentes (FlashList types, MMKV native) - no afectan runtime",
+          "severity": "low"
+        }
+      ]
     },
     {
       "id": "trabajo-lilab",
       "name": "Trabajo - Lilab",
       "path": "D:/Files/Projects/Trabajo - lilab",
-      "description": "Trabajo para Lilab",
-      "tags": [],
-      "status": "unknown",
+      "description": "Proyectos de trabajo para Lilab (Viutify, Prikly, migraciones)",
+      "tags": [
+        "express",
+        "react",
+        "mysql",
+        "typescript"
+      ],
+      "status": "in-progress",
+      "servers": {},
+      "tasks": [],
+      "bugs": [],
+      "subprojects": [
+        {
+          "id": "lilab-viutify-api",
+          "name": "Viutify API",
+          "path": "D:/Files/Projects/Trabajo - lilab/viutify/viutify-api",
+          "tags": [
+            "express",
+            "socket.io"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3310
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3310
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "lilab-viutify-comandas",
+          "name": "Viutify Comandas WebApp",
+          "path": "D:/Files/Projects/Trabajo - lilab/viutify/viutify-comandas-webapp",
+          "tags": [
+            "react",
+            "typescript",
+            "jwt"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            },
+            "build": {
+              "command": "npm run build:start",
+              "port": null
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "lilab-facturacion",
+          "name": "Facturación (Kill Billy)",
+          "path": "D:/Files/Projects/Trabajo - lilab/viutify/facturacion-kill-billy",
+          "tags": [
+            "express",
+            "typescript",
+            "jwt"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "lilab-api-utilitarios",
+          "name": "API Servicios Utilitarios",
+          "path": "D:/Files/Projects/Trabajo - lilab/viutify/api-servicios-utilitarios",
+          "tags": [
+            "express",
+            "mercadopago",
+            "jwt"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "lilab-prikly-back",
+          "name": "Prikly Backend",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/back",
+          "tags": [],
+          "status": "unknown",
+          "servers": {},
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "lilab-prikly-front",
+          "name": "Prikly Frontend",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front",
+          "tags": [],
+          "status": "unknown",
+          "servers": {},
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-script-migracion",
+          "name": "temporal",
+          "path": "D:/Files/Projects/Trabajo - lilab/script-migracion",
+          "tags": [
+            "mysql"
+          ],
+          "status": "unknown",
+          "servers": {},
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-micros-zymple-tareasprogramadas",
+          "name": "micros-zymple-tareasprogramadas",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/back/micros-zymple-tareasprogramadas",
+          "tags": [
+            "express"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-micro-reportes",
+          "name": "viuti-micro-reportes",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/back/viuti-micro-reportes",
+          "tags": [
+            "typescript",
+            "mysql",
+            "jwt"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            },
+            "start": {
+              "command": "npm run start:dev",
+              "port": null
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-zymple-micro-admin",
+          "name": "zymple-micro-admin",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/back/zymple-micro-admin",
+          "tags": [
+            "express",
+            "mysql",
+            "jwt"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-zymple-micro-comandas",
+          "name": "zymple-micro-comandas",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/back/zymple-micro-comandas",
+          "tags": [
+            "express",
+            "mysql",
+            "jwt"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-almacen",
+          "name": "viuti-front-almacen",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-almacen",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-cajas",
+          "name": "@viuti/cajas",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-cajas",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-clientes",
+          "name": "viutify-front-v2",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-clientes",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-comisiones",
+          "name": "@viuti/comisiones",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-comisiones",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-contenedora",
+          "name": "@viuti/root-config",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-contenedora",
+          "tags": [
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 9000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-empleados",
+          "name": "@viuti/empleados",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-empleados",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-estadisticas",
+          "name": "@viuti/estadisticas",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-estadisticas",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-facturacion",
+          "name": "@viuti/facturacion",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-facturacion",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-locales",
+          "name": "@viuti/locales",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-locales",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-micuenta",
+          "name": "@viuti/micuenta",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-miCuenta",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-navigation",
+          "name": "@viuti/navigation",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-navigation",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-onboarding",
+          "name": "@viuti/onboarding-empleados",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-onboarding",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-promociones",
+          "name": "@viuti/promociones",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-promociones",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-proveedores",
+          "name": "@viuti/proveedores",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-proveedores",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-recursos",
+          "name": "react-mf-styleguide",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-recursos",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-reportes",
+          "name": "@viuti/reportes",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-reportes",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-reservas",
+          "name": "@viuti/reservas",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-reservas",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-roles",
+          "name": "viuti-front-roles",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-roles",
+          "tags": [
+            "react",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-seguridad",
+          "name": "@viuti/seguridad",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-seguridad",
+          "tags": [
+            "react",
+            "vite",
+            "typescript",
+            "zustand"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viuti-front-servicios",
+          "name": "@viuti/servicios",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/viuti-front-servicios",
+          "tags": [
+            "react",
+            "typescript"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-zymple-front-comandas",
+          "name": "client",
+          "path": "D:/Files/Projects/Trabajo - lilab/prikly/front/zymple-front-comandas",
+          "tags": [
+            "react",
+            "typescript",
+            "jwt"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 3000
+            },
+            "build": {
+              "command": "npm run build:start",
+              "port": null
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "trabajo-lilab-viutify-api",
+          "name": "viutifyapi",
+          "path": "D:/Files/Projects/Trabajo - lilab/viutify/viutify-comandas/viutify-api",
+          "tags": [
+            "express",
+            "socket.io"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3310
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3310
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
+      ]
+    },
+    {
+      "id": "triso",
+      "name": "Triso",
+      "path": "D:/Files/Projects/Triso",
+      "description": "Landing/portfolio Triso con múltiples versiones iteradas",
+      "tags": [
+        "react",
+        "vite",
+        "tailwind"
+      ],
+      "status": "in-progress",
+      "servers": {},
+      "tasks": [],
+      "bugs": [],
+      "subprojects": [
+        {
+          "id": "triso-landing",
+          "name": "Landing v1",
+          "path": "D:/Files/Projects/Triso/triso-landing",
+          "tags": [
+            "react",
+            "vite",
+            "tailwind"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v2",
+          "name": "Landing v2",
+          "path": "D:/Files/Projects/Triso/triso-landing-v2",
+          "tags": [
+            "react",
+            "vite",
+            "tailwind"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v3",
+          "name": "Landing v3",
+          "path": "D:/Files/Projects/Triso/triso-landing-v3",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v4",
+          "name": "Landing v4",
+          "path": "D:/Files/Projects/Triso/triso-landing-v4",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v5",
+          "name": "Landing v5",
+          "path": "D:/Files/Projects/Triso/triso-landing-v5",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v6",
+          "name": "Landing v6",
+          "path": "D:/Files/Projects/Triso/triso-landing-v6",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v7",
+          "name": "Landing v7",
+          "path": "D:/Files/Projects/Triso/triso-landing-v7",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v8",
+          "name": "Landing v8",
+          "path": "D:/Files/Projects/Triso/triso-landing-v8",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v9",
+          "name": "Landing v9",
+          "path": "D:/Files/Projects/Triso/triso-landing-v9",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v10",
+          "name": "Landing v10",
+          "path": "D:/Files/Projects/Triso/triso-landing-v10",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "done",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-landing-v11",
+          "name": "Landing v11 (actual)",
+          "path": "D:/Files/Projects/Triso/triso-landing-v11",
+          "tags": [
+            "react",
+            "vite",
+            "framer-motion"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "triso-batterysense",
+          "name": "BatterySense Front",
+          "path": "D:/Files/Projects/Triso/batterysense-front",
+          "tags": [
+            "react",
+            "vite",
+            "tailwind",
+            "framer-motion"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 5173
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
+      ]
+    },
+    {
+      "id": "yateatiendo",
+      "name": "Ya Te Atiendo",
+      "path": "D:/Files/Projects/yateatiendo",
+      "description": "Sistema de turnos para barbería - monorepo con server, web y app",
+      "tags": [
+        "next.js",
+        "express",
+        "expo",
+        "postgresql",
+        "tailwind"
+      ],
+      "status": "in-progress",
+      "servers": {
+        "server": {
+          "command": "npm run server:dev",
+          "port": null
+        },
+        "app": {
+          "command": "npm run app:start",
+          "port": null
+        },
+        "web": {
+          "command": "npm run web:dev",
+          "port": null
+        }
+      },
+      "tasks": [],
+      "bugs": [],
+      "subprojects": [
+        {
+          "id": "yateatiendo-server",
+          "name": "API Server",
+          "path": "D:/Files/Projects/yateatiendo/server",
+          "tags": [
+            "express",
+            "typescript",
+            "postgresql",
+            "jwt"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3000
+            },
+            "api": {
+              "command": "npm run dev",
+              "port": 3000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "yateatiendo-web",
+          "name": "Web (Next.js)",
+          "path": "D:/Files/Projects/yateatiendo/web",
+          "tags": [
+            "next.js",
+            "react",
+            "typescript",
+            "tailwind"
+          ],
+          "status": "in-progress",
+          "servers": {
+            "dev": {
+              "command": "npm run dev",
+              "port": 3001
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        },
+        {
+          "id": "yateatiendo-app",
+          "name": "App Móvil",
+          "path": "D:/Files/Projects/yateatiendo/app",
+          "tags": [
+            "react",
+            "react-native",
+            "expo",
+            "typescript",
+            "zustand",
+            "react-query"
+          ],
+          "status": "unknown",
+          "servers": {
+            "dev": {
+              "command": "npm run start",
+              "port": 19000
+            },
+            "mobile": {
+              "command": "npx expo start",
+              "port": 19000
+            }
+          },
+          "tasks": [],
+          "bugs": []
+        }
+      ]
+    },
+    {
+      "id": "camila-landing",
+      "name": "Camila Landing",
+      "path": "D:/Files/Projects/camila-landing",
+      "description": "Landing page para Camila",
+      "tags": [
+        "html",
+        "css"
+      ],
+      "status": "done",
       "servers": {},
       "tasks": [],
       "bugs": []

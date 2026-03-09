@@ -27,32 +27,22 @@
         <div class="filter-buttons">
           <button class="filter active" data-filter="all">Todos</button>
           <button class="filter" data-filter="favorites">Favoritos</button>
-          <button class="filter" data-filter="in-progress">En progreso</button>
-          <button class="filter" data-filter="unknown">Sin estado</button>
-          <button class="filter" data-filter="done">Terminados</button>
         </div>
         <ul id="project-list"></ul>
       </aside>
+      <div id="sidebar-resizer"></div>
 
       <main id="main-content">
         <div class="empty-state" id="empty-state">
           <div class="empty-icon">&#128640;</div>
-          <h2>Seleccioná un proyecto</h2>
-          <p>Elegí un proyecto del panel izquierdo para ver detalles, ejecutar servidores o enviar prompts a Claude.</p>
+          <h2>Selecciona un proyecto</h2>
+          <p>Elegi un proyecto del panel izquierdo para ver detalles, ejecutar servidores o abrir Claude Code.</p>
+          <button class="btn-scan" id="scan-btn" onclick="scanProjects()" style="margin-top:16px">Escanear proyectos</button>
+          <p id="scan-feedback" style="margin-top:8px;font-size:13px;color:var(--text-hint)"></p>
         </div>
         <div id="project-detail" class="hidden"></div>
       </main>
 
-      <aside id="terminal-panel" class="hidden">
-        <div class="terminal-header">
-          <span id="terminal-title">Terminal</span>
-          <div class="terminal-actions">
-            <button id="terminal-clear" title="Limpiar">&#128465;</button>
-            <button id="terminal-close" title="Cerrar">&#10005;</button>
-          </div>
-        </div>
-        <div id="terminal-output"></div>
-      </aside>
     </div>
   </div>
 

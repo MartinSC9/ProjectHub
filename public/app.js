@@ -3,10 +3,54 @@ let projects = [];
 let activeFilter = 'all';
 let selectedProject = null;
 let activeProcesses = new Set();
+
+// Sidebar resizer
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.getElementById('sidebar');
+  const resizer = document.getElementById('sidebar-resizer');
+  if (!resizer || !sidebar) return;
+
+  let isResizing = false;
+
+  resizer.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    resizer.classList.add('active');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const newWidth = Math.min(600, Math.max(200, e.clientX));
+    sidebar.style.width = newWidth + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!isResizing) return;
+    isResizing = false;
+    resizer.classList.remove('active');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+});
 let ws;
 const claudeHistory = new Map(); // projectId -> [{type, text}]
 const terminalLogs = new Map(); // "projectId:serverType" -> string
+const analyzeResults = new Map(); // projectId -> {text, running}
+const featureResults = new Map(); // projectId -> [{feature, text, running}]
 let favorites = new Set(JSON.parse(localStorage.getItem('favorites') || '[]'));
+
+function findProjectById(id) {
+  for (const p of projects) {
+    if (p.id === id) return p;
+    if (p.subprojects) {
+      const sub = p.subprojects.find(s => s.id === id);
+      if (sub) return sub;
+    }
+  }
+  return null;
+}
 
 function initWebSocket() {
   ws = new WebSocket(`ws://${location.host}`);
@@ -60,6 +104,67 @@ function handleWsMessage(msg) {
       if (selectedProject?.id === msg.project) renderClaudeHistory();
       break;
     }
+    case 'analyze-start': {
+      analyzeResults.set(msg.sessionId, { project: msg.project, text: '', running: true, categories: msg.categories });
+      if (selectedProject?.id === msg.project) renderAnalyzeResults();
+      break;
+    }
+    case 'analyze-output': {
+      const r = analyzeResults.get(msg.sessionId);
+      if (r) r.text += msg.data;
+      if (selectedProject?.id === msg.project) renderAnalyzeResults();
+      break;
+    }
+    case 'analyze-done': {
+      const r = analyzeResults.get(msg.sessionId);
+      if (r) r.running = false;
+      if (selectedProject?.id === msg.project) renderAnalyzeResults();
+      break;
+    }
+    case 'feature-start': {
+      const list = featureResults.get(msg.project) || [];
+      list.push({ sessionId: msg.sessionId, feature: msg.feature, text: '', running: true });
+      featureResults.set(msg.project, list);
+      if (selectedProject?.id === msg.project) renderFeatureResults();
+      break;
+    }
+    case 'feature-output': {
+      const list = featureResults.get(msg.project) || [];
+      const item = list.findLast(f => f.sessionId === msg.sessionId);
+      if (item) item.text += msg.data;
+      if (selectedProject?.id === msg.project) renderFeatureResults();
+      break;
+    }
+    case 'feature-done': {
+      const list = featureResults.get(msg.project) || [];
+      const item = list.findLast(f => f.sessionId === msg.sessionId);
+      if (item) item.running = false;
+      if (selectedProject?.id === msg.project) renderFeatureResults();
+      break;
+    }
+    case 'deploy-start': {
+      const el = document.getElementById(`deploy-status-${msg.project}`);
+      if (el) { el.classList.remove('hidden'); el.innerHTML = '<span class="deploy-loading">Subiendo...</span>'; }
+      const btn = document.getElementById(`deploy-btn-${msg.project}`);
+      if (btn) { btn.disabled = true; btn.textContent = 'Subiendo...'; }
+      break;
+    }
+    case 'deploy-output': {
+      const el = document.getElementById(`deploy-status-${msg.project}`);
+      if (el) el.innerHTML += `<pre class="deploy-log">${msg.data}</pre>`;
+      break;
+    }
+    case 'deploy-done': {
+      const el = document.getElementById(`deploy-status-${msg.project}`);
+      if (el) {
+        el.innerHTML += msg.success
+          ? `<div class="deploy-success">Subido: "${msg.commitMsg}"</div>`
+          : `<div class="deploy-error">Error al subir</div>`;
+      }
+      const btn = document.getElementById(`deploy-btn-${msg.project}`);
+      if (btn) { btn.disabled = false; btn.textContent = 'Subir a prod'; }
+      break;
+    }
   }
 }
 
@@ -70,20 +175,26 @@ async function loadProjects() {
   const activeRes = await fetch(`${API}/api/active-processes`);
   const activeList = await activeRes.json();
   activeProcesses = new Set(activeList);
+
+  // Refresh selectedProject with updated data
+  if (selectedProject) {
+    const updated = findProjectById(selectedProject.id);
+    if (updated) {
+      selectedProject = updated;
+      renderProjectDetail();
+    }
+  }
+
   renderSidebar();
   renderStats();
 }
 
 function renderStats() {
   const total = projects.length;
-  const inProgress = projects.filter(p => p.status === 'in-progress').length;
   const totalTasks = projects.reduce((s, p) => s + p.tasks.length, 0);
-  const totalBugs = projects.reduce((s, p) => s + p.bugs.length, 0);
   document.getElementById('stats').innerHTML = `
     <span>Proyectos:<span class="stat-value">${total}</span></span>
-    <span>Activos:<span class="stat-value">${inProgress}</span></span>
-    <span>Tareas:<span class="stat-value">${totalTasks}</span></span>
-    <span>Bugs:<span class="stat-value">${totalBugs}</span></span>
+    <span>Tareas pendientes:<span class="stat-value">${totalTasks}</span></span>
   `;
 }
 
@@ -94,6 +205,99 @@ function toggleFavorite(e, id) {
   localStorage.setItem('favorites', JSON.stringify([...favorites]));
   renderSidebar();
   if (selectedProject?.id === id) renderProjectDetail();
+}
+
+function showProjectContext(e, id) {
+  e.preventDefault();
+  e.stopPropagation();
+  const old = document.getElementById('project-context-menu');
+  if (old) old.remove();
+
+  const isFav = favorites.has(id);
+  const menu = document.createElement('div');
+  menu.id = 'project-context-menu';
+  menu.className = 'context-menu';
+  menu.innerHTML = `
+    <button onclick="contextToggleFav('${id}')">${isFav ? '\u2605 Quitar de favoritos' : '\u2606 Agregar a favoritos'}</button>
+  `;
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
+  document.body.appendChild(menu);
+
+  setTimeout(() => {
+    document.addEventListener('click', removeContextMenu, { once: true });
+  }, 0);
+}
+
+function removeContextMenu() {
+  const m = document.getElementById('project-context-menu');
+  if (m) m.remove();
+}
+
+function contextToggleFav(id) {
+  removeContextMenu();
+  if (favorites.has(id)) favorites.delete(id);
+  else favorites.add(id);
+  localStorage.setItem('favorites', JSON.stringify([...favorites]));
+  renderSidebar();
+  if (selectedProject?.id === id) renderProjectDetail();
+}
+
+async function deployProject(id) {
+  // First check git info
+  const btn = document.getElementById(`deploy-btn-${id}`);
+  const statusEl = document.getElementById(`deploy-status-${id}`);
+
+  try {
+    const infoRes = await fetch(`${API}/api/projects/${id}/git-info`);
+    const info = await infoRes.json();
+
+    if (!info.isRepo) {
+      if (statusEl) { statusEl.classList.remove('hidden'); statusEl.innerHTML = '<div class="deploy-error">No es un repositorio git</div>'; }
+      return;
+    }
+
+    if (!info.remote) {
+      if (statusEl) { statusEl.classList.remove('hidden'); statusEl.innerHTML = '<div class="deploy-error">No tiene remote configurado</div>'; }
+      return;
+    }
+
+    if (!info.hasChanges) {
+      if (statusEl) { statusEl.classList.remove('hidden'); statusEl.innerHTML = '<div class="deploy-info">Sin cambios para subir</div>'; }
+      return;
+    }
+
+    // Show confirmation with info
+    const confirmHtml = `
+      <div class="deploy-confirm">
+        <div class="deploy-info-row"><strong>Repo:</strong> ${info.remote}</div>
+        <div class="deploy-info-row"><strong>Branch:</strong> ${info.branch}</div>
+        <div class="deploy-info-row"><strong>Cambios:</strong> ${info.modifiedCount} modificados, ${info.untrackedCount} nuevos</div>
+        <div class="deploy-files">${info.statusLines.map(l => `<div class="deploy-file-line">${l}</div>`).join('')}</div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-small btn-start" onclick="confirmDeploy('${id}')">Confirmar push</button>
+          <button class="btn btn-small btn-ghost" onclick="cancelDeploy('${id}')">Cancelar</button>
+        </div>
+      </div>
+    `;
+    if (statusEl) { statusEl.classList.remove('hidden'); statusEl.innerHTML = confirmHtml; }
+  } catch (e) {
+    if (statusEl) { statusEl.classList.remove('hidden'); statusEl.innerHTML = `<div class="deploy-error">${e.message}</div>`; }
+  }
+}
+
+async function confirmDeploy(id) {
+  try {
+    await fetch(`${API}/api/projects/${id}/deploy`, { method: 'POST' });
+  } catch (e) {
+    const statusEl = document.getElementById(`deploy-status-${id}`);
+    if (statusEl) statusEl.innerHTML = `<div class="deploy-error">${e.message}</div>`;
+  }
+}
+
+function cancelDeploy(id) {
+  const statusEl = document.getElementById(`deploy-status-${id}`);
+  if (statusEl) { statusEl.classList.add('hidden'); statusEl.innerHTML = ''; }
 }
 
 function renderSidebar() {
@@ -112,19 +316,57 @@ function renderSidebar() {
     return aFav - bFav;
   });
 
-  list.innerHTML = filtered.map(p => `
-    <li class="${selectedProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
+  const expandedGroups = window._expandedGroups || (window._expandedGroups = new Set());
+
+  list.innerHTML = filtered.map(p => {
+    const hasSubs = p.subprojects && p.subprojects.length > 0;
+    const isExpanded = expandedGroups.has(p.id);
+
+    let html = `
+    <li class="${selectedProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')" oncontextmenu="showProjectContext(event,'${p.id}')">
       <div style="display:flex;align-items:center;gap:8px">
+        ${hasSubs ? `<button class="expand-btn ${isExpanded ? 'expanded' : ''}" onclick="toggleExpand(event,'${p.id}')">\u25B6</button>` : ''}
         <button class="fav-btn ${favorites.has(p.id) ? 'is-fav' : ''}" onclick="toggleFavorite(event,'${p.id}')" title="Favorito">${favorites.has(p.id) ? '\u2605' : '\u2606'}</button>
         <span class="project-name">${p.name}</span>
       </div>
-      <span class="status-dot ${p.status}"></span>
-    </li>
-  `).join('');
+    </li>`;
+
+    if (hasSubs && isExpanded) {
+      html += p.subprojects.map(sub => `
+        <li class="subproject ${selectedProject?.id === sub.id ? 'active' : ''}" onclick="selectSubproject('${p.id}','${sub.id}')" oncontextmenu="showProjectContext(event,'${sub.id}')">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="project-name">${sub.name}</span>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    return html;
+  }).join('');
+}
+
+function toggleExpand(e, id) {
+  e.stopPropagation();
+  const expanded = window._expandedGroups || (window._expandedGroups = new Set());
+  if (expanded.has(id)) expanded.delete(id);
+  else expanded.add(id);
+  renderSidebar();
 }
 
 function selectProject(id) {
   selectedProject = projects.find(p => p.id === id);
+  document.getElementById('empty-state').classList.add('hidden');
+  document.getElementById('project-detail').classList.remove('hidden');
+  renderSidebar();
+  renderProjectDetail();
+}
+
+function selectSubproject(parentId, subId) {
+  const parent = projects.find(p => p.id === parentId);
+  if (!parent || !parent.subprojects) return;
+  selectedProject = parent.subprojects.find(s => s.id === subId);
+  if (!selectedProject) return;
+  selectedProject._parentId = parentId;
   document.getElementById('empty-state').classList.add('hidden');
   document.getElementById('project-detail').classList.remove('hidden');
   renderSidebar();
@@ -143,47 +385,23 @@ function renderProjectDetail() {
       <div>
         <h2><button class="fav-btn-lg ${favorites.has(p.id) ? 'is-fav' : ''}" onclick="toggleFavorite(event,'${p.id}')">${favorites.has(p.id) ? '\u2605' : '\u2606'}</button> ${p.name}</h2>
         <div class="project-path">${p.path}</div>
-        <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
       </div>
-      <div class="status-badge ${p.status}" onclick="cycleStatus('${p.id}')">${statusLabel(p.status)}</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-deploy" id="deploy-btn-${p.id}" onclick="deployProject('${p.id}')">Subir a prod</button>
+      </div>
     </div>
+    <div id="deploy-status-${p.id}" class="deploy-status hidden"></div>
 
-    <!-- Servers -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-title">Servidores</span>
-        <button class="btn btn-ghost btn-small" onclick="toggleAddServer()">+ Agregar</button>
-      </div>
-      ${serverEntries.length === 0 ? '<div class="no-items">Sin servidores configurados</div>' : ''}
-      ${serverEntries.map(([type, cfg]) => {
-        const key = `${p.id}:${type}`;
-        const running = activeProcesses.has(key);
-        return `
-          <div class="server-row">
-            <div class="server-info">
-              <span class="server-type">${type}</span>
-              <span class="server-cmd">${cfg.command}</span>
-              ${cfg.port ? `<span class="server-port">:${cfg.port}</span>` : ''}
-            </div>
-            <div style="display:flex;gap:6px;align-items:center">
-              ${running ? `
-                <button class="btn btn-small btn-ghost" onclick="showTerminal('${p.id}','${type}')">Ver Log</button>
-                <button class="btn btn-small btn-stop" onclick="stopServer('${p.id}','${type}')">Parar</button>
-              ` : `
-                <button class="btn btn-small btn-start" onclick="startServer('${p.id}','${type}')">Iniciar</button>
-              `}
-            </div>
-          </div>
-        `;
-      }).join('')}
-      <div id="add-server-form" class="hidden">
-        <div class="add-server-form">
-          <input type="text" id="new-server-type" placeholder="Tipo (frontend, backend, mobile)" style="width:160px" />
-          <input type="text" id="new-server-cmd" placeholder="Comando (npm run dev)" style="flex:1" />
-          <input type="number" id="new-server-port" placeholder="Puerto" style="width:80px" />
-          <button class="btn btn-small btn-accent" onclick="addServer('${p.id}')">Agregar</button>
-        </div>
-      </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+      ${serverEntries.length > 0
+        ? serverEntries.map(([type, cfg]) => `
+          <button class="btn-start-server" onclick="startServer('${p.id}','${type}')">
+            <span class="start-icon">&#9654;</span>
+            ${serverEntries.length > 1 ? `<span>${type}</span>` : '<span>Iniciar</span>'}
+          </button>
+        `).join('')
+        : `<button class="btn btn-ghost btn-small" onclick="detectServer('${p.id}')">Detectar servidor</button>`
+      }
     </div>
 
     <!-- Tasks -->
@@ -195,7 +413,10 @@ function renderProjectDetail() {
         <div class="item-row">
           <input type="checkbox" class="item-checkbox" ${t.status === 'done' ? 'checked' : ''} onchange="toggleTask('${p.id}', ${t.id})" />
           <span class="item-text ${t.status === 'done' ? 'done' : ''}">${t.text}</span>
-          <button class="btn-danger" onclick="deleteTask('${p.id}', ${t.id})">&#10005;</button>
+          <div class="item-actions">
+            ${t.status !== 'done' ? `<button class="btn-claude-small" onclick="openClaudeItem('${p.id}','task','${t.text.replace(/'/g, "\\'")}')">Claude</button>` : ''}
+            <button class="btn-danger" onclick="deleteTask('${p.id}', ${t.id})">&#10005;</button>
+          </div>
         </div>
       `).join('')}
       <div class="add-form">
@@ -204,43 +425,113 @@ function renderProjectDetail() {
       </div>
     </div>
 
-    <!-- Bugs -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-title">Bugs (${p.bugs.length})</span>
-      </div>
-      ${p.bugs.map(b => `
-        <div class="item-row">
-          <span class="severity ${b.severity}">${b.severity}</span>
-          <span class="item-text">${b.text}</span>
-          <button class="btn-danger" onclick="deleteBug('${p.id}', ${b.id})">&#10005;</button>
-        </div>
-      `).join('')}
-      <div class="add-form">
-        <input type="text" id="new-bug-${p.id}" placeholder="Nuevo bug..." onkeydown="if(event.key==='Enter')addBug('${p.id}')" />
-        <select id="new-bug-severity-${p.id}" style="padding:8px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;">
-          <option value="low">Low</option>
-          <option value="medium" selected>Medium</option>
-          <option value="high">High</option>
-        </select>
-        <button class="btn btn-small btn-accent" onclick="addBug('${p.id}')">Agregar</button>
-      </div>
-    </div>
-
     <!-- Claude -->
     <div class="section claude-section">
-      <div class="section-header">
-        <span class="section-title">Claude Code</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-accent btn-small" onclick="openClaude('${p.id}')">Abrir Claude Code</button>
+        <button class="btn btn-ghost btn-small" onclick="openClaude('${p.id}','analyze')">Analizar</button>
+        <button class="btn btn-ghost btn-small" onclick="openClaude('${p.id}','custom')">Prompt custom...</button>
       </div>
-      <div class="claude-input-area">
-        <textarea id="claude-prompt-${p.id}" placeholder="Escribí un prompt para Claude... (se ejecuta en la carpeta del proyecto)" rows="3"></textarea>
-        <button class="btn btn-accent" onclick="sendClaude('${p.id}')" style="align-self:flex-end">Enviar</button>
-      </div>
-      <div class="claude-history" id="claude-history-${p.id}"></div>
     </div>
   `;
 
-  renderClaudeHistory();
+  checkServerStatus();
+}
+
+// Batch analyze modal
+function openBatchAnalyze() {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'batch-modal';
+
+  const projectItems = projects.map(p =>
+    '<label class="analyze-check batch-project-item">' +
+    '<input type="checkbox" class="batch-project-cb" value="' + p.id + '" /> ' +
+    p.name + '</label>'
+  ).join('');
+
+  overlay.innerHTML =
+    '<div class="modal-content">' +
+    '<div class="modal-header"><h3>Analizar m\u00FAltiples proyectos</h3>' +
+    '<button class="btn-danger" onclick="closeBatchModal()">&times;</button></div>' +
+    '<div class="analyze-warning" style="margin-bottom:12px">Cada proyecto seleccionado ejecutar\u00E1 un prompt de Claude Code. M\u00E1s proyectos = m\u00E1s tokens.</div>' +
+    '<div class="modal-body">' +
+    '<div style="margin-bottom:16px"><strong style="font-size:13px;color:var(--text-secondary)">CATEGOR\u00CDAS</strong>' +
+    '<div class="analyze-categories" style="margin-top:8px">' +
+    '<label class="analyze-check"><input type="checkbox" id="batch-cat-bugs" checked /> Bugs y errores</label>' +
+    '<label class="analyze-check"><input type="checkbox" id="batch-cat-security" /> Seguridad</label>' +
+    '<label class="analyze-check"><input type="checkbox" id="batch-cat-optimization" /> Optimizaci\u00F3n</label>' +
+    '<label class="analyze-check"><input type="checkbox" id="batch-cat-tasks" /> Tareas pendientes</label>' +
+    '</div></div>' +
+    '<div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+    '<strong style="font-size:13px;color:var(--text-secondary)">PROYECTOS</strong>' +
+    '<label class="analyze-check" style="font-size:12px"><input type="checkbox" id="batch-select-all" onchange="toggleBatchAll()" /> Seleccionar todos</label>' +
+    '</div><div class="batch-project-list">' + projectItems + '</div></div></div>' +
+    '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">' +
+    '<button class="btn btn-small btn-ghost" onclick="closeBatchModal()">Cancelar</button>' +
+    '<button class="btn btn-small btn-accent" onclick="runBatchAnalyze()">Analizar seleccionados</button>' +
+    '</div></div>';
+
+  document.body.appendChild(overlay);
+}
+
+function closeBatchModal() {
+  const modal = document.getElementById('batch-modal');
+  if (modal) modal.remove();
+}
+
+function toggleBatchAll() {
+  const checked = document.getElementById('batch-select-all').checked;
+  document.querySelectorAll('.batch-project-cb').forEach(cb => cb.checked = checked);
+}
+
+async function runBatchAnalyze() {
+  const projectIds = [...document.querySelectorAll('.batch-project-cb:checked')].map(cb => cb.value);
+  if (!projectIds.length) return;
+
+  const categories = [];
+  if (document.getElementById('batch-cat-bugs').checked) categories.push('bugs');
+  if (document.getElementById('batch-cat-security').checked) categories.push('security');
+  if (document.getElementById('batch-cat-optimization').checked) categories.push('optimization');
+  if (document.getElementById('batch-cat-tasks').checked) categories.push('tasks');
+  if (!categories.length) return;
+
+  closeBatchModal();
+
+  await fetch(API + '/api/analyze-batch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ projectIds, categories })
+  });
+}
+
+function renderAnalyzeResults() {
+  if (!selectedProject) return;
+  const container = document.getElementById('analyze-results-' + selectedProject.id);
+  if (!container) return;
+
+  const results = [...analyzeResults.values()].filter(r => r.project === selectedProject.id);
+  if (!results.length) { container.innerHTML = ''; return; }
+
+  container.innerHTML = results.map(r =>
+    '<div class="claude-msg response ' + (r.running ? 'running' : '') + '">' + escapeHtml(r.text) + (r.running ? '\n\u23F3 Analizando...' : '') + '</div>'
+  ).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderFeatureResults() {
+  if (!selectedProject) return;
+  const container = document.getElementById('feature-results-' + selectedProject.id);
+  if (!container) return;
+
+  const list = featureResults.get(selectedProject.id) || [];
+  if (!list.length) { container.innerHTML = ''; return; }
+
+  container.innerHTML = list.map(f =>
+    '<div class="claude-msg prompt">' + escapeHtml(f.feature) + '</div>' +
+    '<div class="claude-msg response ' + (f.running ? 'running' : '') + '">' + escapeHtml(f.text) + (f.running ? '\n\u23F3 Implementando...' : '') + '</div>'
+  ).join('');
+  container.scrollTop = container.scrollHeight;
 }
 
 function renderClaudeHistory() {
@@ -264,6 +555,34 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+async function analyzeProject(projectId) {
+  const categories = [];
+  if (document.getElementById(`cat-bugs-${projectId}`)?.checked) categories.push('bugs');
+  if (document.getElementById(`cat-security-${projectId}`)?.checked) categories.push('security');
+  if (document.getElementById(`cat-optimization-${projectId}`)?.checked) categories.push('optimization');
+  if (document.getElementById(`cat-tasks-${projectId}`)?.checked) categories.push('tasks');
+  if (!categories.length) return;
+
+  await fetch(`${API}/api/projects/${projectId}/analyze`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ categories })
+  });
+}
+
+async function addFeature(projectId) {
+  const textarea = document.getElementById(`feature-prompt-${projectId}`);
+  const feature = textarea.value.trim();
+  if (!feature) return;
+  textarea.value = '';
+
+  await fetch(`${API}/api/projects/${projectId}/add-feature`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ feature })
+  });
 }
 
 function statusLabel(s) {
@@ -353,22 +672,6 @@ async function deleteBug(projectId, bugId) {
 
 async function startServer(projectId, serverType) {
   await fetch(`${API}/api/projects/${projectId}/start/${serverType}`, { method: 'POST' });
-  showTerminal(projectId, serverType);
-}
-
-async function stopServer(projectId, serverType) {
-  await fetch(`${API}/api/projects/${projectId}/stop/${serverType}`, { method: 'POST' });
-}
-
-function showTerminal(projectId, serverType) {
-  const panel = document.getElementById('terminal-panel');
-  const key = `${projectId}:${serverType}`;
-  panel.classList.remove('hidden');
-  panel.dataset.key = key;
-  document.getElementById('terminal-title').textContent = `${projectId} / ${serverType}`;
-  document.getElementById('terminal-output').textContent = terminalLogs.get(key) || '(esperando output...)';
-  const el = document.getElementById('terminal-output');
-  el.scrollTop = el.scrollHeight;
 }
 
 function toggleAddServer() {
@@ -390,17 +693,64 @@ async function addServer(projectId) {
   renderProjectDetail();
 }
 
-async function sendClaude(projectId) {
-  const textarea = document.getElementById(`claude-prompt-${projectId}`);
-  const prompt = textarea.value.trim();
-  if (!prompt) return;
-  textarea.value = '';
-  await fetch(`${API}/api/projects/${projectId}/claude`, {
+async function openClaude(projectId, mode) {
+  let customPrompt = '';
+  if (mode === 'custom') {
+    customPrompt = prompt('Prompt para Claude:');
+    if (!customPrompt) return;
+  }
+  await fetch(`${API}/api/projects/${projectId}/open-claude`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt })
+    body: JSON.stringify({ mode: mode || 'free', customPrompt })
   });
 }
+
+async function openClaudeItem(projectId, type, text) {
+  const label = type === 'task' ? 'Resolvé esta tarea' : 'Corregí este bug';
+  await fetch(`${API}/api/projects/${projectId}/open-claude`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'custom', customPrompt: `${label}: ${text}` })
+  });
+}
+
+async function detectServer(projectId) {
+  await fetch(`${API}/api/projects/${projectId}/detect-server`, { method: 'POST' });
+  await loadProjects();
+}
+
+async function checkServerStatus() {
+  if (!selectedProject) return;
+  const entries = Object.entries(selectedProject.servers || {});
+  if (!entries.length) return;
+
+  const ports = entries.map(([type, cfg]) => ({ id: selectedProject.id, type, port: cfg.port }));
+  try {
+    const res = await fetch(`${API}/api/check-ports`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ports })
+    });
+    const results = await res.json();
+    for (const r of results) {
+      const btn = document.getElementById(`srv-${r.id}-${r.type}`);
+      if (!btn) continue;
+      if (r.active) {
+        btn.classList.remove('off');
+        btn.classList.add('on');
+        btn.querySelector('.power-status').textContent = 'Encendido';
+      } else {
+        btn.classList.remove('on');
+        btn.classList.add('off');
+        btn.querySelector('.power-status').textContent = 'Apagado';
+      }
+    }
+  } catch {}
+}
+
+// Check server status periodically
+setInterval(checkServerStatus, 5000);
 
 // Event listeners
 document.getElementById('search').addEventListener('input', renderSidebar);
@@ -412,16 +762,6 @@ document.querySelectorAll('.filter').forEach(btn => {
     activeFilter = btn.dataset.filter;
     renderSidebar();
   });
-});
-
-document.getElementById('terminal-close').addEventListener('click', () => {
-  document.getElementById('terminal-panel').classList.add('hidden');
-});
-
-document.getElementById('terminal-clear').addEventListener('click', () => {
-  const key = document.getElementById('terminal-panel').dataset.key;
-  if (key) terminalLogs.set(key, '');
-  document.getElementById('terminal-output').textContent = '';
 });
 
 // Theme toggle
@@ -443,6 +783,35 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
   localStorage.setItem('theme', next);
   updateThemeIcon(next);
 });
+
+// Scan projects
+async function scanProjects() {
+  const btn = document.getElementById('scan-btn');
+  const feedback = document.getElementById('scan-feedback');
+  btn.disabled = true;
+  btn.textContent = 'Escaneando...';
+  if (feedback) feedback.textContent = '';
+
+  try {
+    const res = await fetch(`${API}/api/scan`, { method: 'POST' });
+    const data = await res.json();
+
+    if (data.ok) {
+      if (feedback) feedback.textContent = data.message;
+      await loadProjects();
+      btn.textContent = 'Escanear proyectos';
+      btn.disabled = false;
+    } else {
+      if (feedback) feedback.textContent = 'Error al escanear';
+      btn.textContent = 'Escanear proyectos';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    if (feedback) feedback.textContent = 'Error al escanear';
+    btn.textContent = 'Escanear proyectos';
+    btn.disabled = false;
+  }
+}
 
 // Init
 initTheme();
